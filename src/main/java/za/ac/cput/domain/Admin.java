@@ -19,7 +19,6 @@ public class Admin extends Users implements Serializable {
     private String firstName;
     private String lastName;
     @OneToOne( cascade = CascadeType.ALL, orphanRemoval = true)
-    //@JoinColumn(name = "contactId")
     private Contact contact;
 
 }

@@ -18,6 +18,8 @@ import java.util.Objects;
 @SuperBuilder(toBuilder = true)  // Change to @SuperBuilder
 @ToString
 @EqualsAndHashCode
+
+//User in-built class in Spring Security, hence Users
 public class Users implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

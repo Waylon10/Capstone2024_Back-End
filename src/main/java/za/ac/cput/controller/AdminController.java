@@ -16,15 +16,15 @@ public class AdminController {
     @Autowired
     AdminService adminService;
 
-    @GetMapping("/login")
-    public ResponseEntity<Admin> login(@RequestBody Admin obj) {
-        Admin login = AdminFactory.adminLogin(obj.getUsername(), obj.getPassword());
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody Admin obj) {
+        Admin admin = AdminFactory.adminLogin(obj.getUsername(), obj.getPassword());
 
-        if (login == null) {
+        if (admin == null) {
             return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(null);
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(adminService.findByUsernameAndPassword(login.getUsername(), login.getPassword()));
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.verify(admin));
     }
 
 }

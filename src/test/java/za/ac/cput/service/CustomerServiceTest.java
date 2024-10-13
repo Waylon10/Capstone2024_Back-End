@@ -26,11 +26,11 @@ class  CustomerServiceTest {
     @Autowired
     private CustomerService customerService;
 
-    private static final Contact contact = ContactFactory.createContact("connor2@gmail.com", "02189456123");
+    private static final Contact contact = ContactFactory.createContact("connor@gmail.com", "02189456123");
     private static final Address address = AddressFactory.createAddress("12", "Test Street", "Grabouw", "Western Cape", "7160");
 
     private static final Customer customer = CustomerFactory.createCustomer(
-            contact.getEmail(), "Connor", "McGregor", contact, "123456", Collections.singletonList(address));;
+            contact.getEmail(), "Connor", "McGregor", contact, "$2a$12$IWfqhSq4eA/lJC7ANSYCru9QgnufcPBlgDEbNVT6ysfC8qORChphK", Collections.singletonList(address));;
 
     @Test
     void a_create() {

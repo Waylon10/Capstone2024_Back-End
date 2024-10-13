@@ -4,10 +4,13 @@ package za.ac.cput.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import za.ac.cput.domain.Address;
+import za.ac.cput.domain.Admin;
 import za.ac.cput.domain.Customer;
 import za.ac.cput.factory.AddressFactory;
+import za.ac.cput.factory.AdminFactory;
 import za.ac.cput.factory.CustomerFactory;
 import za.ac.cput.service.CustomerService;
 
@@ -25,21 +28,24 @@ public class CustomerController {
     @Autowired
     private CustomerService customerService;
 
-    @GetMapping("/login")
-    public ResponseEntity<Customer> login(@RequestBody Customer obj) {
-        Customer login = CustomerFactory.createCustomer(obj.getUsername(), obj.getPassword());
+    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
-        if (login == null) {
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody Customer obj) {
+        Customer customer = CustomerFactory.createCustomer(obj.getUsername(), obj.getPassword());
+
+        if (customer == null) {
             return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(null);
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(customerService.findByUsernameAndPassword(login.getUsername(), login.getPassword()));
+        return ResponseEntity.status(HttpStatus.OK).body(customerService.verify(customer));
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Customer> register(@RequestBody Customer obj) {
-        Customer buildObj = CustomerFactory.createCustomer( obj.getFirstName(), obj.getLastName(), obj.getContact());
-        Customer exists = customerService.read(obj.getUserId());
+    public ResponseEntity<Customer> register(@RequestBody Customer customer) {
+        String password = encoder.encode(customer.getPassword());
+        Customer buildObj = CustomerFactory.createCustomer(customer.getContact().getEmail(), customer.getFirstName(), customer.getLastName(), customer.getContact(), password);
+        Customer exists = customerService.read(customer.getUserId());
         if (buildObj == null) {
             return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(null);
         }

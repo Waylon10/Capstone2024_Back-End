@@ -9,6 +9,9 @@ import za.ac.cput.factory.AdminFactory;
 import za.ac.cput.factory.CustomerFactory;
 import za.ac.cput.service.AdminService;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @CrossOrigin(origins = "http://localhost:5119", maxAge = 3600)
 @RestController
 @RequestMapping("/admin")
@@ -17,14 +20,19 @@ public class AdminController {
     AdminService adminService;
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody Admin obj) {
+    public ResponseEntity<Map<String, String>> login(@RequestBody Admin obj) {
         Admin admin = AdminFactory.adminLogin(obj.getUsername(), obj.getPassword());
 
         if (admin == null) {
             return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(null);
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(adminService.verify(admin));
+        String token = adminService.verify(admin);
+        Map<String, String> response = new HashMap<>();
+        response.put("token", token);
+        response.put("role", "admin");
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 }

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import za.ac.cput.domain.Customer;
@@ -16,7 +17,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-@CrossOrigin(origins = "http://localhost:5119", maxAge = 3600)
+@CrossOrigin(origins = "http://localhost:5119", maxAge = 3600, allowedHeaders = "*")
 @RestController
 @RequestMapping("/products")
 public class ProductController {
@@ -70,6 +71,7 @@ public class ProductController {
         return new ResponseEntity<>(productService.getAll(), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping(value = "/addProduct", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> addProduct(@RequestPart("product") Product product,
                                         @RequestPart(value = "image", required = false) MultipartFile image) {

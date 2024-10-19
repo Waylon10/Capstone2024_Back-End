@@ -14,6 +14,8 @@ import za.ac.cput.factory.AdminFactory;
 import za.ac.cput.factory.CustomerFactory;
 import za.ac.cput.service.CustomerService;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,14 +33,19 @@ public class CustomerController {
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody Customer obj) {
+    public ResponseEntity<Map<String, String>> login(@RequestBody Customer obj) {
         Customer customer = CustomerFactory.createCustomer(obj.getUsername(), obj.getPassword());
 
         if (customer == null) {
             return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(null);
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(customerService.verify(customer));
+        String token = customerService.verify(customer);
+        Map<String, String> response = new HashMap<>();
+        response.put("token", token);
+        response.put("role", "customer");
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PostMapping("/register")

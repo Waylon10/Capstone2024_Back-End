@@ -2,6 +2,7 @@
 package za.ac.cput.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,7 +23,7 @@ import java.util.logging.Logger;
 
 import static org.hibernate.type.descriptor.JdbcExtractingLogging.LOGGER;
 
-@CrossOrigin(origins = "http://localhost:5119", maxAge = 3600)
+@CrossOrigin(origins = "http://localhost:5119", maxAge = 3600, allowedHeaders = "*")
 @RestController
 @RequestMapping("/customer")
 public class CustomerController {
@@ -37,7 +38,9 @@ public class CustomerController {
         Customer customer = CustomerFactory.createCustomer(obj.getUsername(), obj.getPassword());
 
         if (customer == null) {
-            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(null);
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("WWW-Authenticate", "None");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).headers(headers).body(Map.of("error", "Invalid email or password."));
         }
 
         String token = customerService.verify(customer);

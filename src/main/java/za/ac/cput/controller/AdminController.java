@@ -1,6 +1,7 @@
 package za.ac.cput.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +13,7 @@ import za.ac.cput.service.AdminService;
 import java.util.HashMap;
 import java.util.Map;
 
-@CrossOrigin(origins = "http://localhost:5119", maxAge = 3600)
+@CrossOrigin(origins = "http://localhost:5119", maxAge = 3600, allowedHeaders = "*")
 @RestController
 @RequestMapping("/admin")
 public class AdminController {
@@ -24,7 +25,9 @@ public class AdminController {
         Admin admin = AdminFactory.adminLogin(obj.getUsername(), obj.getPassword());
 
         if (admin == null) {
-            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(null);
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("WWW-Authenticate", "None");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).headers(headers).body(Map.of("error", "Invalid email or password."));
         }
 
         String token = adminService.verify(admin);

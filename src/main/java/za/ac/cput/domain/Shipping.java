@@ -24,6 +24,7 @@ public class Shipping implements Serializable {
     @JoinColumn(name = "deliveryAddress")
     private Address deliveryAddress;
 
+    @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
     private BigDecimal shippingFee;
 }

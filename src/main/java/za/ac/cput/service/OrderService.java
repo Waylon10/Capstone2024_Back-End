@@ -6,6 +6,7 @@ import za.ac.cput.domain.Order;
 import za.ac.cput.repository.OderRepository;
 import za.ac.cput.service.interfaces.IOrderService;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -39,8 +40,8 @@ public class OrderService implements IOrderService {
     }
 
     @Override
-    public Set<Order> getAll() {
-        return orderRepository.findAll().stream().collect(Collectors.toSet());
+    public List<Order> getAll() {
+        return orderRepository.findAll();
     }
 }
 
